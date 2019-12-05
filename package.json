@@ -1,0 +1,19 @@
+{
+	"name": "release-manager",
+	"description": "For managing github releases.",
+	"version": "1.0.0",
+	"main": "main.js",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/tix-factory/release-manager.git"
+	},
+	"dependencies": {
+		"@actions/core": "^1.0.0",
+		"@actions/github": "^1.0.0"
+	},
+	"keywords": [
+		"github",
+		"release"
+	]
+}
