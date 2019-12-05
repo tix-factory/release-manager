@@ -1,0 +1,15 @@
+name: 'GitHub Release Manager'
+description: 'Manage GitHub releases'
+inputs:
+  github_token:
+    description: 'GitHub token'
+    required: true
+  mode:
+    description: 'Release manager mode (cleanReleaseDrafts, downloadReleaseAsset, uploadReleaseAsset)'
+    required: true
+  tag:
+    description: 'tag for mapping to a release'
+    required: true
+runs:
+  using: 'node12'
+  main: 'main.js'
