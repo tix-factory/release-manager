@@ -1,0 +1,14 @@
+name: Release
+
+on: [push]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+    - name: Clean Release Drafts
+      uses: tix-factory/release-manager@v1
+      with:
+        github_token: ${{ secrets.github_token }}
+        mode: cleanReleaseDrafts
