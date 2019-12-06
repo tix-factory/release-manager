@@ -9,7 +9,7 @@ inputs:
     required: true
   tag:
     description: 'tag for mapping to a release'
-    required: true
+    required: false
 runs:
   using: 'node12'
   main: 'main.js'
