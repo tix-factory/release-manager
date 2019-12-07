@@ -16,6 +16,7 @@ const run = function() {
 	let githubContext = github.context;
 
 	console.log(githubContext);
+	console.log(githubContext.repo);
 	console.log(`Repository: ${githubContext.owner}/${githubContext.repo}`);
 
 	let ocotokit = new github.GitHub(githubToken);
