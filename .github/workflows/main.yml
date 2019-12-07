@@ -1,0 +1,16 @@
+name: Release
+
+on: [push]
+
+jobs:
+  run:
+    
+    runs-on: ubuntu-latest
+  
+    steps:
+    - uses: actions/checkout@v1
+    - name: Clean Release Drafts
+      uses: ./
+      with:
+        github_token: ${{ secrets.github_token }}
+        mode: cleanReleaseDrafts
