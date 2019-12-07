@@ -1,11 +1,15 @@
-var fs = require("fs");
+const fs = require("fs");
+const https = require("https");
+const github = require("@actions/github");
 
 class ReleaseManager {
-	constructor(octokit, ownerName, repositoryName, tag) {
-		this.ocotokit = octokit;
+	constructor(githubToken, ownerName, repositoryName, tag) {
+		this.githubToken = githubToken;
 		this.ownerName = ownerName;
 		this.repositoryName = repositoryName;
 		this.tag = tag;
+
+		this.ocotokit = new github.GitHub(githubToken);
 	}
 
 	getRelease() {
@@ -37,11 +41,36 @@ class ReleaseManager {
 		});
 	}
 
-	downloadReleaseAsset(release, assetName) {
+	downloadReleaseAsset(releaseAsset) {
 		let releaseManager = this;
 
 		return new Promise(function(resolve, reject) {
-			
+			https.get(releaseAsset.url, {
+				headers: {
+					"Accept": "application/octet-stream",
+					"Authorization": `Bearer ${releaseManager.githubToken}`,
+					"User-Agent": "tix-factory/release-manager"
+				}
+			}, function(redirectResponse) {
+				if (redirectResponse.statusCode === 302) {
+					https.get(redirectResponse.headers.location, function(response) {
+						if (response.statusCode === 200) {
+							var chunks = [];
+
+							response.on("data", function(chunk) {
+								chunks.push(chunk);
+							}).on("end", function() {
+								var buffer = Buffer.concat(chunks);
+								resolve(buffer);
+							});
+						} else {
+							reject(`Failed to download asset (${redirectResponse.headers.location})\n\tStatus code: ${response.statusCode}`);
+						}
+					}).on("error", reject);
+				} else {
+					reject(`Failed to get redirect location for asset (${releaseAsset.url}).\n\tStatus code: ${redirectResponse.statusCode}`);
+				}
+			}).on("error", reject);
 		});
 	}
 

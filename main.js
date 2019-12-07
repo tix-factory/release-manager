@@ -1,3 +1,4 @@
+const fs = require("fs");
 const core = require("@actions/core");
 const github = require("@actions/github");
 const releaseManagerConstants = require("./releaseManagerConstants.js");
@@ -35,17 +36,51 @@ const run = function() {
 
 	console.log(`Repository: ${githubContext.repo.owner}/${githubContext.repo.repo}\n\t`, githubContext.repo);
 
-	let ocotokit = new github.GitHub(githubToken);
-	let releaseManager = new ReleaseManager(ocotokit, githubContext.repo.owner, githubContext.repo.repo, tag);
+	let releaseManager = new ReleaseManager(githubToken, githubContext.repo.owner, githubContext.repo.repo, tag);
 
 	switch (mode) {
 		case releaseManagerConstants.mode.uploadReleaseAsset:
 		case releaseManagerConstants.mode.downloadReleaseAsset:
 			releaseManager.getRelease().then(function(releaseResponse) {
 				var release = releaseResponse.data;
-				console.log(mode, releaseResponse, release, release.assets);
-				var assets = release.data.assets;
-			}).catch(console.error);
+				var releaseAsset = release.assets.filter(function(asset) {
+					return asset.name.toLowerCase() === assetName.toLowerCase();
+				})[0];
+
+				switch (mode) {
+					case releaseManagerConstants.mode.uploadReleaseAsset:
+						if (releaseAsset) {
+							console.log(`Release already contains asset (${releaseAsset.name})\n\tSkipping...`);
+							return;
+						}
+	
+						releaseManager.uploadReleaseAsset(release, filePath, assetName).then(function(uploadResponse) {
+							console.log(`Release asset uploaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\t`, uploadResponse);
+						}).catch(exitWithError);
+
+						return;
+					case releaseManagerConstants.mode.downloadReleaseAsset:
+						if (!releaseAsset) {
+							exitWithError(`Release asset to download does not exist.\n\tAsset name: ${assetName}`);
+							return;
+						}
+
+						releaseManager.downloadReleaseAsset(releaseAsset).then(function(assetDataBuffer) {
+							fs.writeFile(filePath, assetDataBuffer, function(err) {
+								if (err) {
+									exitWithError(err);
+									return;
+								}
+
+								console.log(`Release asset downloaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\tContent length: ${assetDataBuffer.length}\n\t`, releaseAsset);
+							});
+						}).catch(exitWithError);
+
+						return;
+					default:
+						exitWithError(`Mode not implemented: ${mode}`);
+				}
+			}).catch(exitWithError);
 			
 			break;
 		case releaseManagerConstants.mode.cleanReleaseDrafts:
