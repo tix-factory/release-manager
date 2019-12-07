@@ -16,6 +16,7 @@ tix-factory/release-manager current has the ability to do the following:
 | downloadReleaseAsset                     | filePath       | The file path for where to put the downloaded release asset. |
 | uploadReleaseAsset                       | assetName      | The name of the asset should be uploaded as in the release. |
 | downloadReleaseAsset                     | assetName      | The name of the asset to download from the release. |
+
 \* tag can be set to 'latest' to pull latest release
 
 ## Samples
