@@ -20,7 +20,8 @@ tix-factory/release-manager current has the ability to do the following:
 \* tag can be set to 'latest' to pull latest release
 
 ## Samples
-Download asset from latest release of another repository.
+###### Download Release Asset
+Downloads a release asset from another repository and saves it to a file.
 ```yml
     - name: Download tix-factory/nuget nuget.zip
       uses: tix-factory/release-manager@v1
@@ -35,7 +36,9 @@ Download asset from latest release of another repository.
 ```
 > See live sample on [roblox-plus/roblox-nuget](https://github.com/Roblox-Plus/roblox-nuget/blob/0655136ad4996912d2b386d79aba8971d5919875/.github/workflows/dotnetcore.yml#L15-L24)
 
-Create a release an upload an asset to it. (Assumes `BUILD_NUMBER` is an environment variable that exists.)
+###### Upload Release Asset
+Creates a release (or gets the release by tag name if it already exists) and uploads an asset to it.
+Assumes `BUILD_NUMBER` is an environment variable that exists.
 ```yml
     - name: Create Release
       uses: tix-factory/release-manager@v1
@@ -48,7 +51,8 @@ Create a release an upload an asset to it. (Assumes `BUILD_NUMBER` is an environ
 ```
 > See live sample on [tix-factory/nuget](https://github.com/tix-factory/nuget/blob/baaee975c0ddb1fb048feaf95c82fab8e1655c90/.github/workflows/dotnetcore.yml#L36-L43).
 
-Delete all draft releases.
+###### Delete Drafts
+Deletes all draft releases.
 ```yml
     - name: Clean draft releases
       uses: tix-factory/release-manager@v1
