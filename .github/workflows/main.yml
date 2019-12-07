@@ -9,6 +9,10 @@ jobs:
   
     steps:
     - uses: actions/checkout@v1
+    - name: Build Number Generator
+      uses: einaregilsson/build-number@v2
+      with:
+        token: ${{ secrets.github_token }}
     - name: Clean Release Drafts
       uses: ./
       with:
