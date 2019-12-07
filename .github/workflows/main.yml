@@ -4,9 +4,11 @@ on: [push]
 
 jobs:
   run:
+    
     runs-on: ubuntu-latest
-    name: A job to say hello
+  
     steps:
+    - uses: actions/checkout@v1
     - name: Clean Release Drafts
       uses: ./
       with:
