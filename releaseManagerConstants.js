@@ -4,6 +4,10 @@ const releaseManagerConstants = {
 		"downloadReleaseAsset": "downloadReleaseAsset",
 		"cleanReleaseDrafts": "cleanReleaseDrafts"
 	},
+	error: {
+		unknown: "unknown",
+		invalidRelease: "invalidRelease"
+	},
 	requiredArgs: {
 		cleanReleaseDrafts: {},
 		uploadReleaseAsset: {

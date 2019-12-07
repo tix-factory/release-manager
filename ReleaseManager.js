@@ -1,6 +1,7 @@
 const fs = require("fs");
 const https = require("https");
 const github = require("@actions/github");
+const releaseManagerConstants = require("./releaseManagerConstants.js");
 
 class ReleaseManager {
 	constructor(githubToken, ownerName, repositoryName, tag) {
@@ -13,24 +14,57 @@ class ReleaseManager {
 	}
 
 	getRelease() {
-		return this.ocotokit.repos.getReleaseByTag({
-			owner: this.ownerName,
-			repo: this.repositoryName,
-			tag: this.tag
+		return new Promise((resolve, reject) => {
+			this.ocotokit.repos.getReleaseByTag({
+				owner: this.ownerName,
+				repo: this.repositoryName,
+				tag: this.tag
+			}).then((response) => {
+				resolve(response.data);
+			}).catch((response) => {
+				if (response.status === 404) {
+					reject({
+						error: releaseManagerConstants.error.invalidRelease,
+						data: response
+					});
+				} else {
+					reject({
+						error: releaseManagerConstants.error.unknown,
+						data: response
+					});
+				}
+			});
+		});
+		return 
+	}
+
+	getOrCreateRelease() {
+		return new Promise((resolve, reject) => {
+			this.getRelease().then(resolve).catch((err) => {
+				if (err.error === releaseManagerConstants.error.invalidRelease) {
+					this.ocotokit.repos.createRelease({
+						owner: this.ownerName,
+						repo: this.repositoryName,
+						tag_name: this.tag
+					}).then((response) => {
+						resolve(response.data);
+					}).catch(reject);
+				} else {
+					reject(err);
+				}
+			});
 		});
 	}
 
 	getDraftReleases() {
-		let releaseManager = this;
-
-		return new Promise(function(resolve, reject) {
-			releaseManager.ocotokit.repos.listReleases({
-				owner: releaseManager.ownerName,
-				repo: releaseManager.repositoryName
-			}).then(function(releases) {
+		return new Promise((resolve, reject) => {
+			this.ocotokit.repos.listReleases({
+				owner: this.ownerName,
+				repo: this.repositoryName
+			}).then((releases) => {
 				let draftReleases = [];
 
-				releases.data.forEach(function(release) {
+				releases.data.forEach((release) => {
 					if (release.draft) {
 						draftReleases.push(release);
 					}
@@ -42,24 +76,22 @@ class ReleaseManager {
 	}
 
 	downloadReleaseAsset(releaseAsset) {
-		let releaseManager = this;
-
-		return new Promise(function(resolve, reject) {
+		return new Promise((resolve, reject) => {
 			https.get(releaseAsset.url, {
 				headers: {
 					"Accept": "application/octet-stream",
-					"Authorization": `Bearer ${releaseManager.githubToken}`,
+					"Authorization": `Bearer ${this.githubToken}`,
 					"User-Agent": "tix-factory/release-manager"
 				}
-			}, function(redirectResponse) {
+			}, (redirectResponse) => {
 				if (redirectResponse.statusCode === 302) {
-					https.get(redirectResponse.headers.location, function(response) {
+					https.get(redirectResponse.headers.location, (response) => {
 						if (response.statusCode === 200) {
 							var chunks = [];
 
-							response.on("data", function(chunk) {
+							response.on("data", (chunk) => {
 								chunks.push(chunk);
-							}).on("end", function() {
+							}).on("end", () => {
 								var buffer = Buffer.concat(chunks);
 								resolve(buffer);
 							});
@@ -77,18 +109,21 @@ class ReleaseManager {
 	uploadReleaseAsset(release, filePath, assetName) {
 		let releaseManager = this;
 
-		return new Promise(function(resolve, reject) {
-			fs.readFile(filePath, function(err, file) {
+		return new Promise((resolve, reject) => {
+			fs.readFile(filePath, (err, file) => {
 				if (err) {
 					reject(err);
 					return;
 				}
 
-				releaseManager.ocotokit.repos.uploadAsset({
-					url: release.data.upload_url,
+				this.ocotokit.repos.uploadReleaseAsset({
+					url: release.upload_url,
 					file: file,
-					contentLength: file.length,
-					name: assetName
+					name: assetName,
+					headers: {
+						"Content-Type": "binary/octet-stream",
+						"Content-Length": file.length
+					}
 				}).then(resolve).catch(reject);
 			});
 		});

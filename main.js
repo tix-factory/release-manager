@@ -25,6 +25,26 @@ const getInput = function(propertyName, mode) {
 	return core.getInput(propertyName, getInputOptions(propertyName, mode));
 };
 
+const test = function() {
+	let githubToken = getInput("github_token");
+	let releaseManager = new ReleaseManager(githubToken, "tix-factory", "release-manager", "build-number-6");
+	
+	var assetName = "mainy.zip";
+	var filePath = "./main.zip";
+
+	releaseManager.getOrCreateRelease().then(function(release) {
+		var releaseAsset = release.assets.filter(function(asset) {
+			return asset.name.toLowerCase() === assetName.toLowerCase();
+		})[0];
+
+		console.log(release);
+
+		releaseManager.uploadReleaseAsset(release, filePath, assetName).then(function(uploadResponse) {
+			console.log(`Release asset uploaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\t`, uploadResponse);
+		}).catch(exitWithError);
+	}).catch(exitWithError);
+};
+
 const run = function() {
 	let githubToken = getInput("github_token");
 	let mode = getInput("mode");
@@ -39,47 +59,44 @@ const run = function() {
 	let releaseManager = new ReleaseManager(githubToken, githubContext.repo.owner, githubContext.repo.repo, tag);
 
 	switch (mode) {
-		case releaseManagerConstants.mode.uploadReleaseAsset:
 		case releaseManagerConstants.mode.downloadReleaseAsset:
-			releaseManager.getRelease().then(function(releaseResponse) {
-				var release = releaseResponse.data;
+			releaseManager.getRelease().then(function(release) {
 				var releaseAsset = release.assets.filter(function(asset) {
 					return asset.name.toLowerCase() === assetName.toLowerCase();
 				})[0];
 
-				switch (mode) {
-					case releaseManagerConstants.mode.uploadReleaseAsset:
-						if (releaseAsset) {
-							console.log(`Release already contains asset (${releaseAsset.name})\n\tSkipping...`);
-							return;
-						}
-	
-						releaseManager.uploadReleaseAsset(release, filePath, assetName).then(function(uploadResponse) {
-							console.log(`Release asset uploaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\t`, uploadResponse);
-						}).catch(exitWithError);
-
-						return;
-					case releaseManagerConstants.mode.downloadReleaseAsset:
-						if (!releaseAsset) {
-							exitWithError(`Release asset to download does not exist.\n\tAsset name: ${assetName}`);
-							return;
-						}
-
-						releaseManager.downloadReleaseAsset(releaseAsset).then(function(assetDataBuffer) {
-							fs.writeFile(filePath, assetDataBuffer, function(err) {
-								if (err) {
-									exitWithError(err);
-									return;
-								}
-
-								console.log(`Release asset downloaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\tContent length: ${assetDataBuffer.length}\n\t`, releaseAsset);
-							});
-						}).catch(exitWithError);
-
-						return;
-					default:
-						exitWithError(`Mode not implemented: ${mode}`);
+				if (!releaseAsset) {
+					exitWithError(`Release asset to download does not exist.\n\tAsset name: ${assetName}`);
+					return;
 				}
+
+				releaseManager.downloadReleaseAsset(releaseAsset).then(function(assetDataBuffer) {
+					fs.writeFile(filePath, assetDataBuffer, function(err) {
+						if (err) {
+							exitWithError(err);
+							return;
+						}
+
+						console.log(`Release asset downloaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\tContent length: ${assetDataBuffer.length}\n\t`, releaseAsset);
+					});
+				}).catch(exitWithError);
+			}).catch(exitWithError);
+			
+			break;
+		case releaseManagerConstants.mode.uploadReleaseAsset:
+			releaseManager.getRelease().then(function(release) {
+				var releaseAsset = release.assets.filter(function(asset) {
+					return asset.name.toLowerCase() === assetName.toLowerCase();
+				})[0];
+
+				if (releaseAsset) {
+					console.log(`Release already contains asset (${releaseAsset.name})\n\tSkipping...`);
+					return;
+				}
+
+				releaseManager.uploadReleaseAsset(release, filePath, assetName).then(function(uploadResponse) {
+					console.log(`Release asset uploaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\t`, uploadResponse);
+				}).catch(exitWithError);
 			}).catch(exitWithError);
 			
 			break;
@@ -107,4 +124,5 @@ const run = function() {
 };
 
 console.log(releaseManagerConstants, ReleaseManager);
-run();
+//run();
+test();
