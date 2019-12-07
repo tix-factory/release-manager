@@ -64,7 +64,7 @@ const run = function() {
 			
 			break;
 		case releaseManagerConstants.mode.uploadReleaseAsset:
-			releaseManager.getRelease().then(function(release) {
+			releaseManager.getOrCreateRelease().then(function(release) {
 				var releaseAsset = release.assets.filter(function(asset) {
 					return asset.name.toLowerCase() === assetName.toLowerCase();
 				})[0];
