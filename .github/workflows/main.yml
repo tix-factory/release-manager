@@ -21,3 +21,14 @@ jobs:
         tag: test-release
         filePath: ./hammer.png
         assetName: hammer_1f528.png
+    - name: Zip release artifact
+      run: zip publish.zip hammer.png
+      shell: bash
+    - name: Upload Release Artifact
+      uses: ./
+      with:
+        github_token: ${{ secrets.github_token }}
+        mode: uploadReleaseAsset
+        tag: ${{ format('build-number-{0}', env.BUILD_NUMBER) }}
+        filePath: ./publish.zip
+        assetName: publishing.zip
