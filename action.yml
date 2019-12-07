@@ -12,6 +12,10 @@ inputs:
     required: false
   filePath:
     description: 'uploadReleaseAsset: The path to the file to upload\ndownloadReleaseAsset: The output location of the asset being downloaded.'
+    required: false
+  assetName:
+    description: 'uploadReleaseAsset: The name to set the release asset to.\ndownloadReleaseAsset: The name of the release asset to download.'
+    required: false
 runs:
   using: 'node12'
   main: 'main.js'

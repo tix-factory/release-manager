@@ -8,11 +8,13 @@ const releaseManagerConstants = {
 		cleanReleaseDrafts: {},
 		uploadReleaseAsset: {
 			tag: true,
-			filePath: true
+			filePath: true,
+			assetName: true
 		},
 		downloadReleaseAsset: {
 			tag: true,
-			filePath: true
+			filePath: true,
+			assetName: true
 		}
 	}
 };

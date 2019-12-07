@@ -21,7 +21,7 @@ const getInputOptions = function(propertyName, mode) {
 };
 
 const getInput = function(propertyName, mode) {
-	return core.gitInput(propertyName, getInputOptions(propertyName, mode));
+	return core.getInput(propertyName, getInputOptions(propertyName, mode));
 };
 
 const run = function() {
@@ -29,6 +29,7 @@ const run = function() {
 	let mode = getInput("mode");
 	let tag = getInput("tag", mode);
 	let filePath = getInput("filePath", mode);
+	let assetName = getInput("assetName", mode);
 
 	let githubContext = github.context;
 
