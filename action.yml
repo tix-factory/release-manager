@@ -1,5 +1,8 @@
 name: 'GitHub Release Manager'
 description: 'Manage GitHub releases'
+branding:
+  icon: folder
+  color: yellow
 inputs:
   github_token:
     description: 'GitHub token'
