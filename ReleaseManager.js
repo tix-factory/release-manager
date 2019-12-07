@@ -26,6 +26,8 @@ class ReleaseManager {
 			}).then(function(releases) {
 				let draftReleases = [];
 
+				console.log(releases);
+
 				releases.forEach(function(release) {
 					if (release.draft) {
 						draftReleases.push(release);
