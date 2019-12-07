@@ -10,6 +10,8 @@ inputs:
   tag:
     description: 'tag for mapping to a release'
     required: false
+  filePath:
+    description: 'uploadReleaseAsset: The path to the file to upload\ndownloadReleaseAsset: The output location of the asset being downloaded.'
 runs:
   using: 'node12'
   main: 'main.js'

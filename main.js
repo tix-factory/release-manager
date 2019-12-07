@@ -8,14 +8,30 @@ const exitWithError = function(err) {
 	process.exit(1);
 };
 
+const getInputOptions = function(propertyName, mode) {
+	switch (propertyName) {
+		case "github_token":
+		case "mode":
+			return { required: true };
+		default:
+			return {
+				required: releaseManagerConstants.requiredArgs[mode][propertyName] || false
+			};
+	}
+};
+
+const getInput = function(propertyName, mode) {
+	return core.gitInput(propertyName, getInputOptions(propertyName, mode));
+};
+
 const run = function() {
-	let githubToken = core.getInput("github_token", { required: true });
-	let mode = core.getInput("mode", { required: true });
-	let tag = core.getInput("tag");
+	let githubToken = getInput("github_token");
+	let mode = getInput("mode");
+	let tag = getInput("tag", mode);
+	let filePath = getInput("filePath", mode);
 
 	let githubContext = github.context;
 
-	console.log(githubContext);
 	console.log(`Repository: ${githubContext.repo.owner}/${githubContext.repo.repo}\n\t`, githubContext.repo);
 
 	let ocotokit = new github.GitHub(githubToken);
@@ -23,10 +39,11 @@ const run = function() {
 
 	switch (mode) {
 		case releaseManagerConstants.mode.uploadReleaseAsset:
-			console.log("try run uploadReleaseAsset");
-			break;
 		case releaseManagerConstants.mode.downloadReleaseAsset:
-			console.log("try run downloadReleaseAsset");
+			releaseManager.getRelease().then(function(release) {
+				console.log(mode, release);
+			}).catch(console.error);
+			
 			break;
 		case releaseManagerConstants.mode.cleanReleaseDrafts:
 			releaseManager.getDraftReleases().then(function(draftReleases) {

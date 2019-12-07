@@ -37,7 +37,15 @@ class ReleaseManager {
 		});
 	}
 
-	uploadAsset(release, filePath, assetName) {
+	downloadReleaseAsset(release, assetName) {
+		let releaseManager = this;
+
+		return new Promise(function(resolve, reject) {
+			
+		});
+	}
+
+	uploadReleaseAsset(release, filePath, assetName) {
 		let releaseManager = this;
 
 		return new Promise(function(resolve, reject) {
