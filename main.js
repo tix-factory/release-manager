@@ -31,12 +31,14 @@ const run = function() {
 	let tag = getInput("tag", mode);
 	let filePath = getInput("filePath", mode);
 	let assetName = getInput("assetName", mode);
+	let repo = getInput("repo", mode) || github.context.repo.repo;
+	let owner = getInput("owner", mode) || github.context.repo.owner;
 
 	let githubContext = github.context;
 
-	console.log(`Repository: ${githubContext.repo.owner}/${githubContext.repo.repo}\n\t`, githubContext.repo);
+	console.log(`Repository: ${owner}/${repo}\n\tCurrent repo:`, githubContext.repo);
 
-	let releaseManager = new ReleaseManager(githubToken, githubContext.repo.owner, githubContext.repo.repo, tag);
+	let releaseManager = new ReleaseManager(githubToken, owner, repo, tag);
 
 	switch (mode) {
 		case releaseManagerConstants.mode.downloadReleaseAsset:

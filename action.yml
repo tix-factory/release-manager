@@ -16,6 +16,12 @@ inputs:
   assetName:
     description: 'uploadReleaseAsset: The name to set the release asset to.\ndownloadReleaseAsset: The name of the release asset to download.'
     required: false
+  repo:
+    description: "The repository to work against. (default: repo the action is running on)"
+    required: false
+  owner:
+    description: "The owner for 'repo' input (default: repo the action is running on)"
+    required: false
 runs:
   using: 'node12'
   main: 'main.js'
