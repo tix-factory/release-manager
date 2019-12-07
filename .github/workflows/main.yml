@@ -13,8 +13,11 @@ jobs:
       uses: einaregilsson/build-number@v2
       with:
         token: ${{ secrets.github_token }}
-    - name: Clean Release Drafts
+    - name: Download Release Asset
       uses: ./
       with:
         github_token: ${{ secrets.github_token }}
-        mode: cleanReleaseDrafts
+        mode: downloadReleaseAsset
+        tag: test-release
+        filePath: ./hammer.png
+        assetName: hammer_1f528.png
