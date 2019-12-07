@@ -41,8 +41,10 @@ const run = function() {
 	switch (mode) {
 		case releaseManagerConstants.mode.uploadReleaseAsset:
 		case releaseManagerConstants.mode.downloadReleaseAsset:
-			releaseManager.getRelease().then(function(release) {
-				console.log(mode, release);
+			releaseManager.getRelease().then(function(releaseResponse) {
+				var release = releaseResponse.data;
+				console.log(mode, releaseResponse, release, release.assets);
+				var assets = release.data.assets;
 			}).catch(console.error);
 			
 			break;
