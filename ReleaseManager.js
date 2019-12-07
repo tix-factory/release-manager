@@ -58,7 +58,7 @@ class ReleaseManager {
 	}
 
 	deleteRelease(releaseId) {
-		return this.ocotokit.deleteRelease({
+		return this.ocotokit.repos.deleteRelease({
 			owner: this.ownerName,
 			repo: this.repositoryName,
 			release_id: releaseId
