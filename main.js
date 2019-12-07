@@ -25,26 +25,6 @@ const getInput = function(propertyName, mode) {
 	return core.getInput(propertyName, getInputOptions(propertyName, mode));
 };
 
-const test = function() {
-	let githubToken = getInput("github_token");
-	let releaseManager = new ReleaseManager(githubToken, "tix-factory", "release-manager", "build-number-6");
-	
-	var assetName = "mainy.zip";
-	var filePath = "./main.zip";
-
-	releaseManager.getOrCreateRelease().then(function(release) {
-		var releaseAsset = release.assets.filter(function(asset) {
-			return asset.name.toLowerCase() === assetName.toLowerCase();
-		})[0];
-
-		console.log(release);
-
-		releaseManager.uploadReleaseAsset(release, filePath, assetName).then(function(uploadResponse) {
-			console.log(`Release asset uploaded.\n\tAsset name: ${assetName}\n\tFile path: ${filePath}\n\t`, uploadResponse);
-		}).catch(exitWithError);
-	}).catch(exitWithError);
-};
-
 const run = function() {
 	let githubToken = getInput("github_token");
 	let mode = getInput("mode");
@@ -123,6 +103,4 @@ const run = function() {
 	}
 };
 
-console.log(releaseManagerConstants, ReleaseManager);
-//run();
-test();
+run();
