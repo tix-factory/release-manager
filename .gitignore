@@ -40,7 +40,9 @@ bower_components
 build/Release
 
 # Dependency directories
-node_modules/
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-a-javascript-action#commit-and-push-your-action-to-github
+# You should check in the package-lock.json and node_modules
+#node_modules/
 jspm_packages/
 
 # TypeScript v1 declaration files
@@ -106,4 +108,6 @@ dist
 .tern-port
 
 # release-manager specific
-package-lock.json
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-a-javascript-action#commit-and-push-your-action-to-github
+# You should check in the package-lock.json and node_modules
+# package-lock.json
