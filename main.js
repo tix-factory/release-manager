@@ -16,11 +16,10 @@ const run = function() {
 	let githubContext = github.context;
 
 	console.log(githubContext);
-	console.log(githubContext.repo);
-	console.log(`Repository: ${githubContext.owner}/${githubContext.repo}`);
+	console.log(`Repository: ${githubContext.repo.owner}/${githubContext.repo.repo}\n\t`, githubContext.repo);
 
 	let ocotokit = new github.GitHub(githubToken);
-	let releaseManager = new ReleaseManager(ocotokit, githubContext.owner, githubContext.repo, tag);
+	let releaseManager = new ReleaseManager(ocotokit, githubContext.repo.owner, githubContext.repo.repo, tag);
 
 	switch (mode) {
 		case releaseManagerConstants.mode.uploadReleaseAsset:
