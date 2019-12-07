@@ -6,7 +6,8 @@ const releaseManagerConstants = {
 	},
 	error: {
 		unknown: "unknown",
-		invalidRelease: "invalidRelease"
+		invalidRelease: "invalidRelease",
+		invalidTag: "invalidTag"
 	},
 	requiredArgs: {
 		cleanReleaseDrafts: {},

@@ -15,13 +15,7 @@ class ReleaseManager {
 
 	getRelease() {
 		return new Promise((resolve, reject) => {
-			this.ocotokit.repos.getReleaseByTag({
-				owner: this.ownerName,
-				repo: this.repositoryName,
-				tag: this.tag
-			}).then((response) => {
-				resolve(response.data);
-			}).catch((response) => {
+			let getFail = (response) => {
 				if (response.status === 404) {
 					reject({
 						error: releaseManagerConstants.error.invalidRelease,
@@ -33,7 +27,24 @@ class ReleaseManager {
 						data: response
 					});
 				}
-			});
+			};
+
+			if (this.tag.toLowerCase() === "latest") {
+				this.ocotokit.repos.getLatestRelease({
+					owner: this.ownerName,
+					repo: this.repositoryName
+				}).then((response) => {
+					resolve(response.data);
+				}).catch(getFail);
+			} else {
+				this.ocotokit.repos.getReleaseByTag({
+					owner: this.ownerName,
+					repo: this.repositoryName,
+					tag: this.tag
+				}).then((response) => {
+					resolve(response.data);
+				}).catch(getFail);
+			}
 		});
 		return 
 	}
@@ -42,6 +53,15 @@ class ReleaseManager {
 		return new Promise((resolve, reject) => {
 			this.getRelease().then(resolve).catch((err) => {
 				if (err.error === releaseManagerConstants.error.invalidRelease) {
+					if (this.tag.toLowerCase() === "latest") {
+						console.error("cannot create release with tag name: 'latest'");
+						reject({
+							error: releaseManagerConstants.error.invalidTag,
+							data: err.data
+						});
+						return;
+					}
+
 					this.ocotokit.repos.createRelease({
 						owner: this.ownerName,
 						repo: this.repositoryName,
