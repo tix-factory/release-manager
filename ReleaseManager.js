@@ -66,4 +66,4 @@ class ReleaseManager {
 	}
 }
 
-return ReleaseManager;
+module.exports =  ReleaseManager;

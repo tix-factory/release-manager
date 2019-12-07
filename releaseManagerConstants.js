@@ -6,4 +6,4 @@ const releaseManagerConstants = {
 	}
 };
 
-return releaseManagerConstants;
+module.exports = releaseManagerConstants;

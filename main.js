@@ -16,6 +16,7 @@ const run = function() {
 	let githubContext = github.context;
 
 	console.log(githubContext);
+	console.log(`Repository: ${githubContext.owner}/${githubContext.repo}`);
 
 	let ocotokit = new github.GitHub(githubToken);
 	let releaseManager = new ReleaseManager(ocotokit, githubContext.owner, githubContext.repo, tag);
@@ -50,4 +51,5 @@ const run = function() {
 	}
 };
 
+console.log(releaseManagerConstants, ReleaseManager);
 run();
